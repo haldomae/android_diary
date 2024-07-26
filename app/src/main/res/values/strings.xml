@@ -16,4 +16,5 @@
     <string name="hint_diary">ボタンを押すと日記が作成されます</string>
     <string name="save_button">保存</string>
     <string name="delete_button">削除</string>
+    <string name="formatted_date">%d/%02d/%02d</string>
 </resources>

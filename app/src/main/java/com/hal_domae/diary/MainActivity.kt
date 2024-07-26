@@ -1,6 +1,7 @@
 package com.hal_domae.diary
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.SimpleAdapter
 import androidx.activity.enableEdgeToEdge
@@ -88,6 +89,10 @@ class MainActivity : AppCompatActivity() {
         // 項目に区切り線をつける
         val dividerItemDecoration = DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL)
         binding.diaryList.addItemDecoration(dividerItemDecoration)
+
+        binding.addButton.setOnClickListener{
+            startActivity(Intent(this@MainActivity, EditActivity::class.java))
+        }
 
 
     }

@@ -1,5 +1,6 @@
 package com.hal_domae.diary
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.SimpleAdapter
 import androidx.activity.enableEdgeToEdge
@@ -9,10 +10,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hal_domae.diary.databinding.ActivityMainBinding
+import com.hal_domae.diary.recyclerview.DatabaseHelper
 import com.hal_domae.diary.recyclerview.ListAdapter
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var dbHelper: DatabaseHelper
+    @SuppressLint("Recycle")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -47,11 +51,39 @@ class MainActivity : AppCompatActivity() {
 //            intArrayOf(R.id.date, R.id.text)
 //        )
 
+        // データベースから取り出したデータを入れる
+        val data = mutableListOf<Map<String, String>>()
+
+        dbHelper = DatabaseHelper(this@MainActivity)
+        dbHelper.readableDatabase.use { db ->
+            // queryメソッドの引数
+            // 1 : テーブル名
+            // 2 : 取得するカラム
+            // 3 : 検索条件
+            // 4 : 検索条件に使う値
+            // 5 : グループ化
+            // 6 : グループに関する条件
+            // 7 : 並び順
+            // 8 : 取得する件数
+            val cursor = db.query("diary_items", null, null, null, null, null, "diary_date DESC", null)
+
+            // データを取り出す時はCursorオブジェクト(返却される形がCursorオブジェクト)を使う
+            // Cursorオブジェクトはどの行を指しているか
+            cursor.use {
+                // moveToNextで位置を動かす
+                while (it.moveToNext()){
+                    data.add(mapOf("date" to it.getString(0), "text" to it.getString(1)))
+                }
+            }
+
+
+        }
+
         // RecyclerViewの設定
         // LinearLayoutManagerはリストの並び方、表示方法を設定
         binding.diaryList.layoutManager = LinearLayoutManager(this)
         // データをセット
-        binding.diaryList.adapter = ListAdapter(sampleData)
+        binding.diaryList.adapter = ListAdapter(data)
 
         // 項目に区切り線をつける
         val dividerItemDecoration = DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL)

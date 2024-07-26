@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingHorizontal="6dp"
     android:paddingVertical="8dp">
+    <!--  RecyclerViewの1行分  -->
     <TextView
         android:id="@+id/date"
         android:layout_width="0dp"

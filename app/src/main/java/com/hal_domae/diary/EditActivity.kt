@@ -1,15 +1,20 @@
 package com.hal_domae.diary
 
+import android.content.ContentValues
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hal_domae.diary.databinding.ActivityEditBinding
+import com.hal_domae.diary.recyclerview.DatabaseHelper
 
 class EditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditBinding
+    private lateinit var dbHelper: DatabaseHelper
     private var textFeeling: String? = ""
     private var textAction: String? = ""
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +44,28 @@ class EditActivity : AppCompatActivity() {
         binding.actionWork.setOnClickListener { actionClicked(it) }
         binding.actionShopping.setOnClickListener { actionClicked(it) }
         binding.actionBedtime.setOnClickListener { actionClicked(it) }
+
+        // データベースの用意
+        dbHelper = DatabaseHelper(this@EditActivity)
+
+        binding.saveButton.setOnClickListener {
+            // 入力チェック
+            if(binding.selectDate.text.isNullOrBlank() || binding.inputDiary.text.isNullOrBlank()){
+                Toast.makeText(this, "未入力の項目があります", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            // データを保存する
+            // データを書き込むときは、writableDatabaseを使う
+            dbHelper.writableDatabase.use {db ->
+                val value = ContentValues().apply {
+                    put("diary_date", binding.selectDate.text.toString())
+                    put("diary_text", binding.inputDiary.text.toString())
+                }
+                // insertで保存する
+                db.insert("diary_items", null, value)
+                startActivity(Intent(this@EditActivity, MainActivity::class.java))
+            }
+        }
     }
 
     // 気分が選択されたとき

@@ -17,4 +17,5 @@
     <string name="save_button">保存</string>
     <string name="delete_button">削除</string>
     <string name="formatted_date">%d/%02d/%02d</string>
+    <string name="diary_text">%s%s</string>
 </resources>

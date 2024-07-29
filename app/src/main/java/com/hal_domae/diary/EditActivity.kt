@@ -71,6 +71,21 @@ class EditActivity : AppCompatActivity() {
             }
         }
 
+        binding.deleteButton.setOnClickListener {
+            // 日付が入力されているかチェック
+            if(binding.selectDate.text.isNullOrBlank()){
+                Toast.makeText(this, "日付が選択されていません", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            dbHelper.writableDatabase.use { db ->
+                val params = arrayOf(binding.selectDate.text.toString())
+                // データを削除する際にはdeleteメソッドを使う
+                // カラム名 = ? はプレースホルダー
+                db.delete("diary_items", "diary_date = ?", params)
+                startActivity(Intent(this@EditActivity, MainActivity::class.java))
+            }
+        }
+
         intent?.extras?.let {
             binding.selectDate.setText(it.getString("DIARY_DATE"))
             binding.inputDiary.setText(it.getString("DIARY_TEXT"))
